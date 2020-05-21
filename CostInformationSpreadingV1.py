@@ -5,6 +5,7 @@ A simple implementation of Cost information Spreadning
 """
 import numpy as np 
 import os 
+import time
 
 def reputationDynamics(costSpreadReputation, actionRulePopulation, socialNormPopulationWide, spreadDonorReputationOrNot):
     ### Update reputation through rounds of donation games
@@ -120,7 +121,7 @@ def actionRuleDynamics(selectionIntensity, costSpreadReputation, fileName):
         sumCoopRatio += cooperationRate
         generalCoopRatio = sumCoopRatio * 1.0 / iGeneration
         # if (iGeneration > 500000 and iGeneration % 500000 == 1) or iGeneration == 1:
-        if (iGeneration > 100 and iGeneration % 100 == 1) or iGeneration == 1:
+        if (iGeneration > 10000 and iGeneration % 10000 == 1) or iGeneration == 1:
            print("Epoch[{}] , generalCoopRatio:{}".format(iGeneration,generalCoopRatio))
            temp = str(generalCoopRatio) + " "
            with open(fileName, "a") as f:
@@ -162,9 +163,12 @@ if __name__ == '__main__':
 	indexSocialNormNow = 3 
 	### set the output folder
 	# outputFileFolder = r"D:\2020春课程资料\博弈论科研\代价声望传播\003_选择强度\Image_Scoring")
-	outputFileFolder = os.path.join(os.getcwd(),"result")
-	if not os.path.exists(outputFileFolder):
-		os.mkdir(outputFileFolder)
+
+	if not os.path.exists('./result'):
+		os.mkdir('./result')
+	dir_str = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
+	outputFileFolder = os.path.join("./result/{}".format(dir_str))
+	os.mkdir(outputFileFolder)
 	fileName = os.path.join(outputFileFolder , "coopRate.txt")
 	if not os.path.exists(fileName):
 		os.mknod(fileName)
