@@ -5,11 +5,12 @@ using DelimitedFiles
 using CSV
 
 
-function frequency_caculate(frequency_matrix,actionRulePopulation,spreadDonorReputationOrNot,Epoch)
-    #       Not_report   report
+function frequency_caculate(frequency_matrix,actionRulePopulation,spreadDonorReputationOrNot,reputation_list,Epoch)
+    #               Not_report/bad   report/good
     # AllC
     # CondC
     # AllD
+    # reputation
     frequency_matrix_re = frequency_matrix*(Epoch-1)*Ntotal
     for i in 1:Ntotal
         action = actionRulePopulation[i,:]
@@ -28,6 +29,10 @@ function frequency_caculate(frequency_matrix,actionRulePopulation,spreadDonorRep
         end 
         frequency_matrix_re[action_index,spread_index] +=1
     end
+    good_reputation = sum(reputation_list)
+    bad_reputaion = Ntotal - good_reputation
+    frequency_matrix_re[4,1] +=bad_reputaion
+    frequency_matrix_re[4,2] +=good_reputation 
     return frequency_matrix_re*1.0/(Epoch*Ntotal)
 end
 
@@ -36,6 +41,7 @@ function reputationDynamics(costSpreadReputation, actionRulePopulation, socialNo
 
     ### reset image matrix (everyone is randomly good or bad)
     imageArray = rand(0:1, Ntotal)
+    reputation_list = zeros(Ntotal)
     imageMatrixTemp = ones(Int, Ntotal, Ntotal)
     for indexInd in 1:Ntotal
         imageMatrixTemp[:,indexInd] = ones(Ntotal) * imageArray[indexInd]
@@ -111,7 +117,9 @@ function reputationDynamics(costSpreadReputation, actionRulePopulation, socialNo
         # println("Updated image matrix")
         # display(imageMatrixTemp)
         # sleep(15)
+        reputation_list = imageMatrixTemp[1,:]
 
+        
         # xyz
     end
     ### record cooperation rate
@@ -119,7 +127,7 @@ function reputationDynamics(costSpreadReputation, actionRulePopulation, socialNo
 
     ### use Accumulated Payoffs
 
-    return cooperationRate, payoffAll
+    return cooperationRate, payoffAll,reputation_list 
 end
 
 function actionRuleDynamics(selectionIntensity, costSpreadReputation, fileName)
@@ -139,11 +147,13 @@ function actionRuleDynamics(selectionIntensity, costSpreadReputation, fileName)
     # println(socialNormPopulationWide);
     #
 	sumCoopRatio = 0
-    frequency_matrix = zeros((3,2))
-	
+    frequency_matrix = zeros((4,2))
+    reputation_list = zeros(Ntotal)
+    # (bad,good) = [0,1]
+	# reputation_frequency = zeros(1,2)
     for iGeneration in 1:numGeneration
         ### Reputation dynamics
-        cooperationRate, payoffAll = reputationDynamics(costSpreadReputation, actionRulePopulation, socialNormPopulationWide, spreadDonorReputationOrNot);
+        cooperationRate, payoffAll,reputation_list = reputationDynamics(costSpreadReputation, actionRulePopulation, socialNormPopulationWide, spreadDonorReputationOrNot);
         ###
 		sumCoopRatio += cooperationRate
 		generalCoopRatio = sumCoopRatio * 1.0 / iGeneration
@@ -169,7 +179,7 @@ function actionRuleDynamics(selectionIntensity, costSpreadReputation, fileName)
             spreadDonorReputationOrNot[focalPlayer] = spreadDonorReputationOrNot[roleModel]
         end
         ###
-        frequency_matrix = frequency_caculate(frequency_matrix,actionRulePopulation,spreadDonorReputationOrNot,iGeneration)
+        frequency_matrix = frequency_caculate(frequency_matrix,actionRulePopulation,spreadDonorReputationOrNot,reputation_list,iGeneration)
     end
 end
 
