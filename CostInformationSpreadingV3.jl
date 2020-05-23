@@ -130,7 +130,7 @@ function reputationDynamics(costSpreadReputation, actionRulePopulation, socialNo
     return cooperationRate, payoffAll,reputation_list 
 end
 
-function actionRuleDynamics(selectionIntensity, costSpreadReputation, fileName)
+function actionRuleDynamics(selectionIntensity, costSpreadReputation, fileName,outputFileFolder)
     ### initially indiviudals adopt random strategies from AllC, Disc, AllD
     indexActionRule = rand([1,2,4], Ntotal);
     actionRulePopulation = actionRulePossible[indexActionRule, :];
@@ -157,7 +157,7 @@ function actionRuleDynamics(selectionIntensity, costSpreadReputation, fileName)
         ###
 		sumCoopRatio += cooperationRate
 		generalCoopRatio = sumCoopRatio * 1.0 / iGeneration
-		if (iGeneration > 100 && iGeneration % 100 == 1) || iGeneration == 1
+		if (iGeneration > 100000 && iGeneration % 100000 == 1) || iGeneration == 1
 		   temp = string(generalCoopRatio) * " "
            open(fileName, "a") do io
               write(io, temp);
@@ -199,9 +199,11 @@ probFailedCooperation = 0.05;
 
 ### Image Scoring -> 4, Stern Juding -> 10, Simple Standing -> 12
 indexSocialNormNow = 4
-### set the output folder
-outputFileFolder = raw".\003_选择强度\Image_Scoring"
-fileName = outputFileFolder * "\\coopRate.txt";
+### set the output folder Simple_Standing
+
+# outputFileFolder = raw".\003_选择强度\Image_Scoring\cR_0.03"
+
+# fileName = outputFileFolder * "\\coopRate.txt";
 #### Second order norms
 orderNorm = 2;
 #### action rule : (G, B) = (1, 0) means C with Good, D with Bad
@@ -239,10 +241,12 @@ indexAllIndividuals = [1:Ntotal;];
 
 selectionIntensityArray = [1.7];
 for indexSelectionIntensity in 1:length(selectionIntensityArray)
-    costSpreadReputation = 0.01
+
 	selectionIntensity = selectionIntensityArray[indexSelectionIntensity]
-	for iRepeat in 1:3
+	for iRepeat in 1:1
+		costSpreadReputation = [0.03]
+		outputFileFolder = raw".\003_选择强度\Simple_Standing\cR_" * string(costSpreadReputation[iRepeat])
         fileNameMain = outputFileFolder * "\\coopRate" * "_omega=" * string(selectionIntensity) * "_repeat" * string(iRepeat) * ".txt";
-        actionRuleDynamics(selectionIntensity, costSpreadReputation, fileNameMain)
+        actionRuleDynamics(selectionIntensity, costSpreadReputation[iRepeat], fileNameMain,outputFileFolder)
     end
 end
