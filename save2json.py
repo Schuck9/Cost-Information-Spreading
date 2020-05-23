@@ -1,0 +1,26 @@
+import json
+
+class JsonEncoder(json.JSONEncoder):
+
+	def default(self, obj):
+		if isinstance(obj, np.integer):
+			return int(obj)
+		elif isinstance(obj, np.floating):
+			return float(obj)
+		elif isinstance(obj, np.ndarray):
+			return obj.tolist()
+		elif isinstance(obj, datetime):
+			return obj.__str__()
+		else:
+			return super(MyEncoder, self).default(obj)
+
+def load_dict(filename):
+	'''load dict from json file'''
+	with open(filename,"r") as json_file:
+		dic = json.load(json_file)
+	return dic
+
+def save_dict(filename, dic):
+	'''save dict into json file'''
+	with open(filename,'w') as json_file:
+		json.dump(dic, json_file, ensure_ascii=False, cls=JsonEncoder)
