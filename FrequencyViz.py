@@ -62,8 +62,13 @@ def data_loader(RecordName,Epoch_list = None):
 		frequency_vector = frequency_matrix.flatten()
 		for  i,key in enumerate(keyName):
 			frequency_dict[key].append(frequency_vector[i])
-	frequency_dict_path = os.path.join(RecordName,"frequency_dict.json")
-	save_dict(frequency_dict_path,frequency_dict)
+		NotReportProb,ReportProb = np.sum(frequency_matrix[:3],axis=0)
+		frequency_dict["NotReport"].append(NotReportProb)
+		frequency_dict["Report"] .append(ReportProb)
+		# frequency_dict["Report"] = frequency_dict["AllC_Report"] + frequency_dict["CondC_Report"]+ frequency_dict["AllD_Report"]
+		# frequency_dict["NotReport"] = frequency_dict["AllC_NotReport"] + frequency_dict["CondC_NotReport"]+ frequency_dict["AllD_NotReport"]
+	# frequency_dict_path = os.path.join(RecordName,"frequency_dict.json")
+	# save_dict(frequency_dict_path,frequency_dict)
 	return frequency_dict
 
 def data_summary():
@@ -77,7 +82,11 @@ def data_summary():
 			RecordName_path = os.path.join(norm_path,RecordName)
 			data_dict = data_loader(RecordName_path)
 			data_collect[norm][RecordName] = data_dict
+
+	
+	
 	data_collect_path = os.path.join(result_path,"sumdata_dict.json")
+	
 	save_dict(data_collect_path,data_collect)
 
 def viz_all(data):
@@ -117,6 +126,12 @@ def viz_all(data):
 
 def viz(data):
 	#每种Norm的每种策略在不同cR下的图
+	keyName = ["AllC_NotReport","AllC_Report",
+			"CondC_NotReport","CondC_Report",
+			"AllD_NotReport","AllD_Report",
+			"Reputation_Bad","Reputation_Good",
+			"NotReport","Report"
+]
 	info = 'Strategy Frequency'
 
 	# x_label = ["0.5/1","0.5","1"]
@@ -155,10 +170,11 @@ if __name__ == '__main__':
 	# frequency_dict = data_loader(RecordName)
 	# for key in keyName:
 	# 	print("{}:{}".format(key,frequency_dict[key]))
+	data_collect ={}
 	if not os.path.exists("./result/sumdata_dict.json"):
 		data_collect = data_summary()
 	else:
 		data_collect = load_dict("./result/sumdata_dict.json")
 		print("data loaded!")
-	viz(data_collect)
+		viz(data_collect)
 	
