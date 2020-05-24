@@ -96,7 +96,7 @@ def viz_all(data):
 	# x_label = ["0.5/1","0.5","1"]
 
 	# x_axis = np.log10(x_label)
-	norm_name = ["Image_Scoring","Stern_Juding"]
+	norm_name = ["Image_Scoring","Stern_Juding","Simple_Standing"]
 	cR = ["cR_0.00","cR_0.01","cR_0.03"]
 	x_axis = np.arange(len(data[norm_name[0]][cR[0]][keyName[0]]))
 
@@ -115,8 +115,9 @@ def viz_all(data):
 			# plt.plot(x_axis, p_axis,marker='^',linestyle='-',color='skyblue', label='Offer (p)')
 			# plt.plot(x_axis, q_axis, marker='s',linestyle='-',color='red', label='Demand (q)')
 			# plt.plot(x_axis, y_list[0] ,marker='>',linestyle='-',color='purple', label='w = 0.001')
-			plt.plot(x_axis, data[norm_name[0]][cR_][key] ,linestyle='-',color='skyblue', label=norm_name[0])
-			plt.plot(x_axis, data[norm_name[1]][cR_][key]  , linestyle='-',color='red', label=norm_name[1])
+			plt.plot(x_axis, data[norm_name[0]][cR_][key] ,linestyle='dashdot',color='skyblue', label=norm_name[0])
+			plt.plot(x_axis, data[norm_name[1]][cR_][key]  , linestyle='dashdot',color='red', label=norm_name[1])
+			plt.plot(x_axis, data[norm_name[2]][cR_][key]  , linestyle='dashdot',color='purple', label=norm_name[2])
 			# plt.plot(x_axis, data[norm_name[2]][cR_][key] , marker='*',linestyle='-',color='red', label=norm_name[2])
 			# plt.plot(x_axis, y_p_list[i+3], marker='*',linestyle='-',color='black', label='WS = 10')	    # plt.plot(x_axis, thresholds, color='blue', label='threshold')
 			plt.legend(loc = 'upper right') # 显示图例
@@ -137,7 +138,7 @@ def viz(data):
 	# x_label = ["0.5/1","0.5","1"]
 
 	# x_axis = np.log10(x_label)
-	norm_name = ["Image_Scoring","Stern_Juding"]
+	norm_name = ["Image_Scoring","Stern_Juding","Simple_Standing"]
 	cR = ["cR_0.00","cR_0.01","cR_0.03"]
 	x_axis = np.arange(len(data[norm_name[0]][cR[0]][keyName[0]]))
 
@@ -176,5 +177,5 @@ if __name__ == '__main__':
 	else:
 		data_collect = load_dict("./result/sumdata_dict.json")
 		print("data loaded!")
-		viz(data_collect)
+		viz_all(data_collect)
 	
